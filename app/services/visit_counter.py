@@ -18,10 +18,7 @@ class VisitCounterService:
             page_id: Unique identifier for the page
         """
         # TODO: Implement visit count increment
-        if page_id in data:
-            data[page_id] += 1
-        else:
-            data[page_id] = 1
+        await self.redis_manager.increment(f"visit:{page_id}")
 
         pass
 
@@ -36,6 +33,6 @@ class VisitCounterService:
             Current visit count
         """
         # TODO: Implement getting visit count
-        count = data.get(page_id, 0)
+        count = await self.redis_manager.get(f"visit:{page_id}")
         return count
-        return 0
+        # return 0

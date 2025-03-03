@@ -16,6 +16,21 @@ class RedisManager:
         # TODO: Initialize connection pools for each Redis node
         # 1. Create connection pools for each Redis node
         # 2. Initialize Redis clients
+
+        self.redis_client = redis.Redis(
+            host='redis1',
+            port=6379,
+            db=0,
+            decode_responses=True
+        )
+
+        try:
+            self.redis_client.ping()
+            print("Connected to Redis")
+        except redis.ConnectionError:
+            print("Failed to connect to Redis")
+            raise
+
         pass
 
     async def get_connection(self, key: str) -> redis.Redis:
@@ -48,7 +63,7 @@ class RedisManager:
         # 1. Get the appropriate Redis connection
         # 2. Increment the counter
         # 3. Handle potential failures and retries
-        return 0
+        return self.redis_client.incrby(key, amount)
 
     async def get(self, key: str) -> Optional[int]:
         """
@@ -64,4 +79,5 @@ class RedisManager:
         # 1. Get the appropriate Redis connection
         # 2. Retrieve the value
         # 3. Handle potential failures and retries
-        return None
+        value = self.redis_client.get(key)
+        return int(value) if value else 0
