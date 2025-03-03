@@ -3,6 +3,8 @@ import asyncio
 from datetime import datetime
 from ..core.redis_manager import RedisManager
 
+data: Dict[str, int] = {}
+
 class VisitCounterService:
     def __init__(self):
         """Initialize the visit counter service with Redis manager"""
@@ -16,6 +18,11 @@ class VisitCounterService:
             page_id: Unique identifier for the page
         """
         # TODO: Implement visit count increment
+        if page_id in data:
+            data[page_id] += 1
+        else:
+            data[page_id] = 1
+
         pass
 
     async def get_visit_count(self, page_id: str) -> int:
@@ -29,4 +36,6 @@ class VisitCounterService:
             Current visit count
         """
         # TODO: Implement getting visit count
+        count = data.get(page_id, 0)
+        return count
         return 0
